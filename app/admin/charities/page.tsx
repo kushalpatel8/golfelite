@@ -201,7 +201,7 @@ export default function AdminCharitiesPage() {
                 <div className="pt-4 flex justify-end gap-2">
                   <Button type="button" variant="ghost" onClick={cancelForm}>Cancel</Button>
                   <Button type="submit" disabled={saving} className="bg-gold-glow text-gold-glow-foreground hover:bg-gold-glow/90">
-                    {saving ? <Loader2 className="h-4 w-4 animate-spin flex-shrink-0" /> : (editingId ? "Save Changes" : "Save Charity")}
+                    {saving ? <Loader2 className="h-4 w-4 animate-spin shrink-0" /> : (editingId ? "Save Changes" : "Save Charity")}
                   </Button>
                 </div>
               </form>
@@ -217,7 +217,7 @@ export default function AdminCharitiesPage() {
               <div className="flex justify-between items-start gap-2">
                 <div className="flex items-start gap-3">
                   {charity.logo && (
-                    <div className="w-10 h-10 rounded-md bg-secondary/50 border border-border/50 overflow-hidden flex-shrink-0">
+                    <div className="w-10 h-10 rounded-md bg-secondary/50 border border-border/50 overflow-hidden shrink-0">
                       <img src={charity.logo} alt="Logo" className="w-full h-full object-cover" />
                     </div>
                   )}

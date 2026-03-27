@@ -48,6 +48,26 @@ export default function AdminUsersPage() {
     }
   };
 
+  const handleUpdateSubscription = async (userId: string, status: string) => {
+    const actionStr = status === "active" ? "grant subscription to" : "cancel subscription for";
+    if (!confirm(`Are you sure you want to ${actionStr} this user?`)) return;
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ targetUserId: userId, updates: { subscriptionStatus: status } }),
+      });
+      if (res.ok) {
+        toast.success(`Subscription ${status === "active" ? "activated" : "cancelled"} successfully!`);
+        fetchUsers();
+      } else {
+        toast.error("Failed to update subscription");
+      }
+    } catch (err) {
+      toast.error("Network error");
+    }
+  };
+
   const handleBanUser = async (userId: string, currentBanState: boolean) => {
     const actionStr = currentBanState ? "unban" : "ban";
     if (!confirm(`Are you sure you want to ${actionStr} this user from the platform?`)) return;
@@ -195,16 +215,20 @@ export default function AdminUsersPage() {
               </CardHeader>
 
               <CardContent className="pt-2 text-sm space-y-3 pb-2">
-                <div className="flex justify-between items-center border-t border-border/50 pt-2">
-                  <span className="text-muted-foreground">Subscription</span>
-                  <Badge variant={user.subscriptionStatus === "active" ? "default" : "secondary"}>
-                    {user.subscriptionStatus.toUpperCase()}
-                  </Badge>
-                </div>
-                <div className="flex justify-between items-center border-t border-border/50 pt-2">
-                  <span className="text-muted-foreground">Scores Logged</span>
-                  <span className="font-semibold">{user.scores?.length || 0}/5</span>
-                </div>
+                {user.role !== "admin" && (
+                  <div className="flex justify-between items-center border-t border-border/50 pt-2">
+                    <span className="text-muted-foreground">Subscription</span>
+                    <Badge variant={user.subscriptionStatus === "active" ? "default" : "secondary"}>
+                      {user.subscriptionStatus.toUpperCase()}
+                    </Badge>
+                  </div>
+                )}
+                {user.role !== "admin" && (
+                  <div className="flex justify-between items-center border-t border-border/50 pt-2">
+                    <span className="text-muted-foreground">Scores Logged</span>
+                    <span className="font-semibold">{user.scores?.length || 0}/5</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center border-t border-border/50 pt-2">
                   <span className="text-muted-foreground">Joined</span>
                   <span className="flex items-center gap-1">
@@ -216,18 +240,43 @@ export default function AdminUsersPage() {
             </div>
 
             <div className="p-6 pt-4 grid grid-cols-2 gap-2 mt-auto border-t border-border/10 bg-card/50">
-              <Link href={`/dashboard?userId=${user.clerkId || user._id}`} className="block">
-                <Button variant="outline" size="sm" className="w-full border-primary/50 text-primary hover:bg-primary/10" disabled={user.isBanned}>
-                  <LayoutDashboard className="h-3 w-3 mr-1" /> View Dashboard
-                </Button>
-              </Link>
+              {user.role !== "admin" && (
+                <Link href={`/dashboard?userId=${user.clerkId || user._id}`} className="block">
+                  <Button variant="outline" size="sm" className="w-full border-primary/50 text-primary hover:bg-primary/10" disabled={user.isBanned}>
+                    <LayoutDashboard className="h-3 w-3 mr-1" /> View Dashboard
+                  </Button>
+                </Link>
+              )}
               <Button variant="outline" size="sm" className="w-full text-foreground" onClick={() => setEditingUser({...user})} disabled={user.isBanned}>
                 <Edit2 className="h-3 w-3 mr-1" /> Edit Profile
               </Button>
               {user.role !== "admin" && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full text-foreground hover:bg-muted" 
+                  onClick={() => window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${user.email}&su=Message from GolfElite Admin`, '_blank')}
+                >
+                  <Mail className="h-3 w-3 mr-1" /> Email User
+                </Button>
+              )}
+              {user.role !== "admin" && (
                 <Button variant="outline" size="sm" className="w-full text-gold-glow border-gold-glow/50 hover:bg-gold-glow/10" onClick={() => promoteToAdmin(user._id)} disabled={user.isBanned}>
                   Promote Admin
                 </Button>
+              )}
+              {user.role !== "admin" && (
+                <>
+                  {user.subscriptionStatus === "active" ? (
+                    <Button variant="outline" size="sm" className="w-full text-destructive border-destructive/50 hover:bg-destructive/10" onClick={() => handleUpdateSubscription(user._id, "cancelled")}>
+                      Cancel Subscription
+                    </Button>
+                  ) : (
+                    <Button variant="outline" size="sm" className="w-full text-emerald-glow border-emerald-glow/50 hover:bg-emerald-glow/10" onClick={() => handleUpdateSubscription(user._id, "active")}>
+                      Give Subscription
+                    </Button>
+                  )}
+                </>
               )}
               {user.role !== "admin" && (
                 <Button variant="outline" size="sm" className={`w-full ${user.isBanned ? "text-emerald-glow border-emerald-glow/50 hover:bg-emerald-glow/10" : "text-orange-500 border-orange-500/50 hover:bg-orange-500/10"}`} onClick={() => handleBanUser(user._id, user.isBanned)}>
@@ -281,40 +330,44 @@ export default function AdminUsersPage() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Subscription Status</label>
-                  <select 
-                    className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                    value={editingUser.subscriptionStatus}
-                    onChange={(e) => setEditingUser({...editingUser, subscriptionStatus: e.target.value})}
-                  >
-                    <option value="none">None</option>
-                    <option value="active">Active</option>
-                    <option value="cancelled">Cancelled</option>
-                    <option value="lapsed">Lapsed</option>
-                  </select>
-                </div>
-
-                <div className="space-y-3 pt-4 border-t border-border/50">
-                  <div className="flex justify-between items-center">
-                    <label className="text-sm font-medium">Golf Scores ({editingUser.scores?.length || 0}/5)</label>
-                    <Button type="button" variant="outline" size="sm" onClick={addMockScore}>+ Add Fix</Button>
+                {editingUser.role !== "admin" && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Subscription Status</label>
+                    <select 
+                      className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      value={editingUser.subscriptionStatus}
+                      onChange={(e) => setEditingUser({...editingUser, subscriptionStatus: e.target.value})}
+                    >
+                      <option value="none">None</option>
+                      <option value="active">Active</option>
+                      <option value="cancelled">Cancelled</option>
+                      <option value="lapsed">Lapsed</option>
+                    </select>
                   </div>
-                  {editingUser.scores?.map((score: any, idx: number) => (
-                    <div key={idx} className="flex justify-between items-center bg-secondary/50 p-2 rounded border border-border/50">
-                      <div>
-                        <p className="text-sm font-bold text-primary">Stableford: {score.stablefordPoints}</p>
-                        <p className="text-xs text-muted-foreground">{new Date(score.date).toLocaleDateString()}</p>
-                      </div>
-                      <Button type="button" variant="ghost" size="sm" onClick={() => removeScore(idx)} className="text-destructive hover:bg-destructive/10">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                )}
+
+                {editingUser.role !== "admin" && (
+                  <div className="space-y-3 pt-4 border-t border-border/50">
+                    <div className="flex justify-between items-center">
+                      <label className="text-sm font-medium">Golf Scores ({editingUser.scores?.length || 0}/5)</label>
+                      <Button type="button" variant="outline" size="sm" onClick={addMockScore}>+ Add Fix</Button>
                     </div>
-                  ))}
-                  {(!editingUser.scores || editingUser.scores.length === 0) && (
-                    <div className="text-xs text-muted-foreground text-center py-2">No scores logged.</div>
-                  )}
-                </div>
+                    {editingUser.scores?.map((score: any, idx: number) => (
+                      <div key={idx} className="flex justify-between items-center bg-secondary/50 p-2 rounded border border-border/50">
+                        <div>
+                          <p className="text-sm font-bold text-primary">Stableford: {score.stablefordPoints}</p>
+                          <p className="text-xs text-muted-foreground">{new Date(score.date).toLocaleDateString()}</p>
+                        </div>
+                        <Button type="button" variant="ghost" size="sm" onClick={() => removeScore(idx)} className="text-destructive hover:bg-destructive/10">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                    {(!editingUser.scores || editingUser.scores.length === 0) && (
+                      <div className="text-xs text-muted-foreground text-center py-2">No scores logged.</div>
+                    )}
+                  </div>
+                )}
 
                 <div className="pt-4 flex justify-end gap-2 border-t border-border/50">
                   <Button type="button" variant="ghost" onClick={() => setEditingUser(null)}>Cancel</Button>
@@ -325,6 +378,7 @@ export default function AdminUsersPage() {
           </Card>
         </div>
       )}
+
     </div>
   );
 }

@@ -219,7 +219,7 @@ function DashboardContent() {
               </Link>
             </CardHeader>
             <CardContent>
-              <div className="p-4 rounded-xl bg-gradient-to-br from-primary/5 to-emerald-glow/5 border border-primary/10">
+              <div className="p-4 rounded-xl bg-linear-to-br from-primary/5 to-emerald-glow/5 border border-primary/10">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="p-2 rounded-lg bg-primary/10">
                     <Heart className="h-5 w-5 text-primary" />
@@ -243,7 +243,7 @@ function DashboardContent() {
 
           {/* Next Draw Countdown */}
           <Card className="border-border/50 bg-card/80 overflow-hidden">
-            <div className="h-1 bg-gradient-to-r from-gold-glow via-primary to-emerald-glow" />
+            <div className="h-1 bg-linear-to-r from-gold-glow via-primary to-emerald-glow" />
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 rounded-lg bg-gold-glow/10">

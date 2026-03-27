@@ -123,7 +123,7 @@ export default function HomePage() {
               className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.95] mb-6"
             >
               <span className="text-foreground">Play.</span>{" "}
-              <span className="bg-gradient-to-r from-primary via-emerald-glow to-primary bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-primary via-emerald-glow to-primary bg-clip-text text-transparent">
                 Win.
               </span>{" "}
               <span className="text-foreground">Give.</span>
@@ -191,7 +191,7 @@ export default function HomePage() {
                   {[1, 2, 3, 4].map((i) => (
                     <div
                       key={i}
-                      className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/40 to-emerald-glow/40 border-2 border-background flex items-center justify-center text-xs font-bold text-primary-foreground"
+                      className="w-8 h-8 rounded-full bg-linear-to-br from-primary/40 to-emerald-glow/40 border-2 border-background flex items-center justify-center text-xs font-bold text-primary-foreground"
                     >
                       {String.fromCharCode(64 + i)}
                     </div>
@@ -289,12 +289,12 @@ export default function HomePage() {
                 <Card className="relative group hover:shadow-xl transition-all duration-500 overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm h-full">
                   {/* Gradient Top Edge */}
                   <div
-                    className={`absolute top-0 inset-x-0 h-1 bg-gradient-to-r ${item.color}`}
+                    className={`absolute top-0 inset-x-0 h-1 bg-linear-to-r ${item.color}`}
                   />
                   <CardContent className="p-8">
                     <div className="flex items-start justify-between mb-6">
                       <div
-                        className={`p-3 rounded-xl bg-gradient-to-br ${item.color}`}
+                        className={`p-3 rounded-xl bg-linear-to-br ${item.color}`}
                       >
                         <item.icon className={`h-6 w-6 ${item.iconColor}`} />
                       </div>
@@ -411,7 +411,7 @@ export default function HomePage() {
 
             {/* Charity Visual */}
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-emerald-glow/5 to-transparent rounded-3xl blur-2xl" />
+              <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-emerald-glow/5 to-transparent rounded-3xl blur-2xl" />
               <Card className="relative overflow-hidden border-border/50 bg-card/80 backdrop-blur-sm">
                 <CardContent className="p-8">
                   <div className="flex items-center gap-4 mb-6">
@@ -486,7 +486,7 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.1, type: "spring" }}
-                  className="w-14 h-14 md:w-18 md:h-18 rounded-2xl bg-gradient-to-br from-primary to-emerald-glow flex items-center justify-center text-primary-foreground font-heading text-xl md:text-2xl font-bold shadow-lg"
+                  className="w-14 h-14 md:w-18 md:h-18 rounded-2xl bg-linear-to-br from-primary to-emerald-glow flex items-center justify-center text-primary-foreground font-heading text-xl md:text-2xl font-bold shadow-lg"
                 >
                   {num}
                 </motion.div>
@@ -519,7 +519,7 @@ export default function HomePage() {
                   key={tier.match}
                   className={`border-border/50 ${
                     tier.highlight
-                      ? "bg-gradient-to-br from-primary/10 to-emerald-glow/5 border-primary/20"
+                      ? "bg-linear-to-br from-primary/10 to-emerald-glow/5 border-primary/20"
                       : "bg-card/80"
                   }`}
                 >

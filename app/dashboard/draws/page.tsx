@@ -84,7 +84,7 @@ export default function DrawsPage() {
       {/* Upcoming Draw */}
       {activeDraw && (
         <Card className="border-primary/20 overflow-hidden">
-          <div className="h-1 bg-gradient-to-r from-gold-glow via-primary to-emerald-glow" />
+          <div className="h-1 bg-linear-to-r from-gold-glow via-primary to-emerald-glow" />
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <CardTitle className="font-heading text-lg flex items-center gap-2">
@@ -120,7 +120,7 @@ export default function DrawsPage() {
                   <div
                     key={i}
                     className={`w-14 h-14 rounded-xl flex items-center justify-center text-lg font-heading font-bold shadow-md ${
-                        n === "?" ? "bg-muted/20 border-2 border-dashed border-border/50 text-muted-foreground/30" : "bg-gradient-to-br from-primary to-emerald-glow text-primary-foreground"
+                        n === "?" ? "bg-muted/20 border-2 border-dashed border-border/50 text-muted-foreground/30" : "bg-linear-to-br from-primary to-emerald-glow text-primary-foreground"
                     }`}
                   >
                     {n}
